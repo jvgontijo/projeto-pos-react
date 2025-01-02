@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { criarCarro } from '../services/axiosConfig';
+import './CarForm.css';
+import { criarCarro } from '../../services/car-service';
 
 const CarForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -41,7 +42,6 @@ const CarForm: React.FC = () => {
 
   return (
     <div>
-      <h1>Cadastro de Carro</h1>
       {message && <p>{message}</p>}
       <form onSubmit={handleSubmit}>
         <div>
