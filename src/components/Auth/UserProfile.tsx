@@ -26,7 +26,6 @@ const UserProfile: React.FC = () => {
           <p>ID: {profile.id}</p>
           <p>Nome: {profile.nome}</p>
           <p>Email: {profile.email}</p>
-          {/* Adicione mais campos conforme necessário */}
         </div>
       ) : (
         <p>Carregando...</p>

@@ -26,15 +26,9 @@ const Header: React.FC = () => {
     <header className="header">
       <div className="header-title">Projeto Pós - Carros</div>
       <div className="header-menu">
-        <button className="menu-button" onClick={handleMenuToggle}>
-          ⚙️ Opções
+        <button className="menu-button" onClick={handleLogout}>
+          Sair
         </button>
-        {menuOpen && (
-          <div className="menu-dropdown">
-            <button onClick={handleProfile}>Perfil</button>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        )}
       </div>
     </header>
   );

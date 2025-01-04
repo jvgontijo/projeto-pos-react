@@ -21,10 +21,10 @@ const DashboardLayout = () => {
               </li>
               <li>
                 <NavLink
-                  to="/car-form"
+                  to="/profile"
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >
-                  Cadastro de Carro
+                  Meu Perfil
                 </NavLink>
               </li>
             </ul>
