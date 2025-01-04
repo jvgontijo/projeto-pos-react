@@ -16,8 +16,3 @@ export interface LoginData {
   email: string;
   password: string;
 }
-
-export const authenticateUser = async (loginData: LoginData) => {
-  const response = await api.post("/usuarios/login", loginData);
-  return response.data;
-};

@@ -5,28 +5,32 @@ import CarList from "./components/CarList/CarList";
 import CarForm from "./components/CarForm/CarForm";
 import LoginPage from "./components/Auth/LoginPage/LoginPage";
 import DashboardLayout from "./components/DashboardLayout/DashboardLayout";
+import UserProfile from "./components/Auth/UserProfile";
+import { AuthProvider } from "./components/Auth/AuthContext";
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("authToken");
+  const isAuthenticated = !!localStorage.getItem("token");
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<CarList />} />
-          <Route path="car-form" element={<CarForm />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<CarList />} />
+            <Route path="profile" element={<UserProfile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
-import { authenticateUser } from "../../../services/user-service";
+import { useAuth } from "../AuthContext";
 
 const LoginPage = () => {
+  const { login } = useAuth(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,12 +12,7 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      console.log(email, password);
-
-      const response = await authenticateUser({ email: email, password });
-
-      localStorage.setItem("authToken", response.token);
-
+      await login(email, password);
       navigate("/");
     } catch (err) {
       setError("Credenciais inválidas. Por favor, tente novamente.");
@@ -24,22 +20,24 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      {error && <p className="error-message">{error}</p>}
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Entrar</button>
+    <div className="login">
+      <div className="login-box">
+        <h1>Login</h1>
+        {error && <p className="error-message">{error}</p>}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button onClick={handleLogin}>Entrar</button>
+      </div>
     </div>
   );
 };
