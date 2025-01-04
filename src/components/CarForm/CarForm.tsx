@@ -1,76 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Button, TextField } from "@mui/material";
+import { criarCarro } from "../../services/car-service";
 import './CarForm.css';
-import { criarCarro } from '../../services/car-service';
 
-const CarForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    modelo: '',
-    ano: 0,
-    cor: '',
-    cavalosDePotencia: 0,
-    fabricante: '',
-    pais: '',
-  });
+interface CarFormProps {
+  onCarAdded: () => void;
+}
 
-  const [message, setMessage] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === 'ano' || name === 'cavalosDePotencia' ? parseInt(value) : value,
-    });
-  };
+const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
+  const [modelo, setModelo] = useState("");
+  const [ano, setAno] = useState("");
+  const [cor, setCor] = useState("");
+  const [fabricante, setFabricante] = useState("");
+  const [pais, setPais] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newCar = { modelo, ano, cor, fabricante, pais };
+
     try {
-      await criarCarro(formData);
-      setMessage('Carro criado com sucesso!');
-      setFormData({
-        modelo: '',
-        ano: 0,
-        cor: '',
-        cavalosDePotencia: 0,
-        fabricante: '',
-        pais: '',
-      });
-    } catch (err) {
-      setMessage('Erro ao criar o carro.');
+      await criarCarro(newCar);
+      onCarAdded();
+    } catch (error) {
+      console.error("Erro ao cadastrar o carro:", error);
     }
   };
 
   return (
-    <div>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Modelo:</label>
-          <input type="text" name="modelo" value={formData.modelo} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Ano:</label>
-          <input type="number" name="ano" value={formData.ano} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Cor:</label>
-          <input type="text" name="cor" value={formData.cor} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Cavalos de Potência:</label>
-          <input type="number" name="cavalosDePotencia" value={formData.cavalosDePotencia} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>Fabricante:</label>
-          <input type="text" name="fabricante" value={formData.fabricante} onChange={handleChange} required />
-        </div>
-        <div>
-          <label>País:</label>
-          <input type="text" name="pais" value={formData.pais} onChange={handleChange} required />
-        </div>
-        <button type="submit">Salvar</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="form-container">
+      <label htmlFor="modelo">Modelo</label>
+      <TextField
+        id="modelo"
+        value={modelo}
+        onChange={(e) => setModelo(e.target.value)}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+      
+      <label htmlFor="ano">Ano</label>
+      <TextField
+        id="ano"
+        type="number"
+        value={ano}
+        onChange={(e) => setAno(e.target.value)}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+      
+      <label htmlFor="cor">Cor</label>
+      <TextField
+        id="cor"
+        value={cor}
+        onChange={(e) => setCor(e.target.value)}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+      
+      <label htmlFor="fabricante">Fabricante</label>
+      <TextField
+        id="fabricante"
+        value={fabricante}
+        onChange={(e) => setFabricante(e.target.value)}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+      
+      <label htmlFor="pais">País</label>
+      <TextField
+        id="pais"
+        value={pais}
+        onChange={(e) => setPais(e.target.value)}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+      
+      <Button type="submit" className="form-button">
+        Cadastrar
+      </Button>
+    </form>
   );
 };
 

@@ -1,61 +1,62 @@
-form {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
+@import '../../theme.css';
+
+.form-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: var(--border-radius);
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow: hidden;
+  max-height: 90vh;
+  box-shadow: none;
 }
 
-form h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+.form-container label {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: var(--text-color);
 }
 
-form p {
-    text-align: center;
-    color: green;
+.form-container .form-input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  border: none;
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  font-size: 1rem;
+  outline: none;
+  background-color: var(--light-gray);
+  transition: background-color 0.3s ease;
 }
 
-form div {
-    margin-bottom: 15px;
+.form-container .form-input:focus {
+  background-color: var(--white);
 }
 
-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+.form-container .form-button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--primary-gradient);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-sizing: border-box;
+  margin-top: 1rem;
 }
 
-form input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
+.form-container .form-button:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
 }
 
-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-
-form button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.form-container .form-button:active {
+  background: var(--primary-color);
 }

@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import './CarList.css';
 import { listarCarrosPaginado, deletarCarro } from "../../services/car-service";
-
-interface Carro {
-  id: number;
-  modelo: string;
-  ano: number;
-  cor: string;
-  cavalosDePotencia: number;
-  fabricante: string;
-  pais: string;
-}
+import { Fab, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Carro } from "../../models/car";
+import CarForm from "../CarForm/CarForm";
 
 const CarList: React.FC = () => {
   const [carros, setCarros] = useState<Carro[]>([]);
@@ -18,6 +12,7 @@ const CarList: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false); // Controla a abertura do modal
 
   const fetchCarros = async (page: number, size: number) => {
     try {
@@ -57,6 +52,19 @@ const CarList: React.FC = () => {
   }, [currentPage, pageSize]);
 
   const totalPages = Math.ceil(totalCount / pageSize);
+
+  const handleOpenForm = () => {
+    setOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpen(false);
+  };
+
+  const handleCarAdded = () => {
+    fetchCarros(currentPage, pageSize);
+    handleCloseForm();
+  };
 
   return (
     <div>
@@ -120,6 +128,27 @@ const CarList: React.FC = () => {
           Próximo
         </button>
       </div>
+
+      <Fab 
+        color="primary" 
+        aria-label="add" 
+        onClick={handleOpenForm} 
+        style={{ position: 'fixed', bottom: 16, right: 16 }}
+      >
+        <AddIcon />
+      </Fab>
+
+      <Dialog open={open} onClose={handleCloseForm} maxWidth="md" fullWidth>
+        <DialogTitle>Cadastrar Carro</DialogTitle>
+        <DialogContent>
+          <CarForm onCarAdded={handleCarAdded} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseForm} color="primary">
+            Cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
