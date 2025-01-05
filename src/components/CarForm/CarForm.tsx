@@ -1,25 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { criarCarro } from "../../services/car-service";
+import { atualizarCarro, criarCarro } from "../../services/car-service";
 import './CarForm.css';
+import { Carro } from "../../models/car";
 
 interface CarFormProps {
   onCarAdded: () => void;
+  initialData?: Carro | null;
 }
 
-const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
+const CarForm: React.FC<CarFormProps> = ({ onCarAdded, initialData }) => {
   const [modelo, setModelo] = useState("");
-  const [ano, setAno] = useState("");
+  const [ano, setAno] = useState(0);
   const [cor, setCor] = useState("");
+  const [cavalosDePotencia, setCavalosDePotencia] = useState(0);
   const [fabricante, setFabricante] = useState("");
   const [pais, setPais] = useState("");
 
+  useEffect(() => {
+    if(initialData) {
+      setModelo(initialData.modelo);
+      setAno(initialData.ano);
+      setCor(initialData.cor);
+      setCavalosDePotencia(initialData.cavalosDePotencia);
+      setFabricante(initialData.fabricante);
+      setPais(initialData.pais);
+    }
+  }, [initialData]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newCar = { modelo, ano, cor, fabricante, pais };
+    const carro = { modelo, ano, cor, cavalosDePotencia, fabricante, pais };
 
     try {
-      await criarCarro(newCar);
+      if(initialData) {
+        await atualizarCarro(initialData.id, carro);
+      } else {
+        await criarCarro(carro);
+      }
       onCarAdded();
     } catch (error) {
       console.error("Erro ao cadastrar o carro:", error);
@@ -38,19 +56,19 @@ const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
         required
         variant="outlined"
       />
-      
+
       <label htmlFor="ano">Ano</label>
       <TextField
         id="ano"
         type="number"
         value={ano}
-        onChange={(e) => setAno(e.target.value)}
+        onChange={(e) => setAno(Number(e.target.value))}
         fullWidth
         className="form-input"
         required
         variant="outlined"
       />
-      
+
       <label htmlFor="cor">Cor</label>
       <TextField
         id="cor"
@@ -61,7 +79,18 @@ const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
         required
         variant="outlined"
       />
-      
+
+      <label htmlFor="cavalosDePotencia">Cavalos de Potência</label>
+      <TextField
+        id="cavalosDePotencia"
+        value={cavalosDePotencia}
+        onChange={(e) => setCavalosDePotencia(Number(e.target.value))}
+        fullWidth
+        className="form-input"
+        required
+        variant="outlined"
+      />
+
       <label htmlFor="fabricante">Fabricante</label>
       <TextField
         id="fabricante"
@@ -72,7 +101,7 @@ const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
         required
         variant="outlined"
       />
-      
+
       <label htmlFor="pais">País</label>
       <TextField
         id="pais"
@@ -83,9 +112,9 @@ const CarForm: React.FC<CarFormProps> = ({ onCarAdded }) => {
         required
         variant="outlined"
       />
-      
+
       <Button type="submit" className="form-button">
-        Cadastrar
+        {initialData ? "Atualizar" : "Cadastrar"}
       </Button>
     </form>
   );

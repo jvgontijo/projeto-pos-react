@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import './CarList.css';
-import { listarCarrosPaginado, deletarCarro } from "../../services/car-service";
-import { Fab, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { listarCarrosPaginado, deletarCarro, buscarCarroPorId } from "../../services/car-service";
+import {
+  Fab,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { Carro } from "../../models/car";
 import CarForm from "../CarForm/CarForm";
+import './CarList.css';
 
 const CarList: React.FC = () => {
   const [carros, setCarros] = useState<Carro[]>([]);
@@ -12,7 +19,8 @@ const CarList: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false); // Controla a abertura do modal
+  const [open, setOpen] = useState(false);
+  const [editingCar, setEditingCar] = useState<Carro | null>(null);
 
   const fetchCarros = async (page: number, size: number) => {
     try {
@@ -26,12 +34,23 @@ const CarList: React.FC = () => {
     }
   };
 
+  const handleEdit = async (id: number) => {
+    try {
+      const carro = await buscarCarroPorId(id);
+      setEditingCar(carro); // Define o carro que está sendo editado
+      setOpen(true); // Abre o modal
+    } catch (error) {
+      console.error(`Erro ao buscar o carro ID: ${id}`, error);
+      setError(`Erro ao buscar o carro ID: ${id}`);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     try {
       await deletarCarro(id);
       fetchCarros(currentPage, pageSize);
     } catch {
-      setError("Erro ao deletar o carro.");
+      setError(`Erro ao deletar o carro ID: ${id}`);
     }
   };
 
@@ -54,6 +73,7 @@ const CarList: React.FC = () => {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   const handleOpenForm = () => {
+    setEditingCar(null);
     setOpen(true);
   };
 
@@ -61,20 +81,27 @@ const CarList: React.FC = () => {
     setOpen(false);
   };
 
-  const handleCarAdded = () => {
+  const handleCarSaved = () => {
     fetchCarros(currentPage, pageSize);
     handleCloseForm();
   };
 
   return (
-    <div>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <div>
+    <div className="car-list-container">
+      {error && <p className="error-message">{error}</p>}
+      <div className="page-controls">
         <label htmlFor="pageSize">Itens por página:</label>
-        <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+        <select
+          id="pageSize"
+          value={pageSize}
+          onChange={handlePageSizeChange}
+          className="input-box"
+        >
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={20}>20</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
         </select>
       </div>
       <table className="table-list">
@@ -84,6 +111,7 @@ const CarList: React.FC = () => {
             <th>Modelo</th>
             <th>Ano</th>
             <th>Cor</th>
+            <th>Cavalos de Potência</th>
             <th>Fabricante</th>
             <th>País</th>
             <th>Ações</th>
@@ -96,10 +124,24 @@ const CarList: React.FC = () => {
               <td>{carro.modelo}</td>
               <td>{carro.ano}</td>
               <td>{carro.cor}</td>
+              <td>{carro.cavalosDePotencia}</td>
               <td>{carro.fabricante}</td>
               <td>{carro.pais}</td>
               <td>
-                <button onClick={() => handleDelete(carro.id)}>Excluir</button>
+                <div className="buttons">
+                  <button
+                    onClick={() => handleEdit(carro.id)}
+                    className="edit-button"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(carro.id)}
+                    className="delete-button"
+                  >
+                    Excluir
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
@@ -109,6 +151,7 @@ const CarList: React.FC = () => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 0}
+          className="button"
         >
           Anterior
         </button>
@@ -116,7 +159,7 @@ const CarList: React.FC = () => {
           <button
             key={index}
             onClick={() => handlePageChange(index)}
-            className={index === currentPage ? "active" : ""}
+            className={`button ${index === currentPage ? "active" : ""}`}
           >
             {index + 1}
           </button>
@@ -124,6 +167,7 @@ const CarList: React.FC = () => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage + 1 >= totalPages}
+          className="button"
         >
           Próximo
         </button>
@@ -139,9 +183,9 @@ const CarList: React.FC = () => {
       </Fab>
 
       <Dialog open={open} onClose={handleCloseForm} maxWidth="md" fullWidth>
-        <DialogTitle>Cadastrar Carro</DialogTitle>
+        <DialogTitle>{editingCar ? "Editar Carro" : "Cadastrar Carro"}</DialogTitle>
         <DialogContent>
-          <CarForm onCarAdded={handleCarAdded} />
+          <CarForm onCarAdded={handleCarSaved} initialData={editingCar} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseForm} color="primary">

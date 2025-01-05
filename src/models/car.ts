@@ -5,5 +5,5 @@ export interface Carro {
     cor: string,
     cavalosDePotencia: number,
     fabricante: string,
-    pais: String
+    pais: string
 }
