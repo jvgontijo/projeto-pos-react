@@ -32,8 +32,17 @@ export const atualizarCarro = (id: number, carroAtualizado: any) =>
 export const deletarCarro = (id: number) =>
   api.delete(`/carros/${id}`).then((res) => res.data);
 
-export const exportarCarros = () =>
-  api.get('/carros/export-cars', { responseType: 'blob' }).then((res) => res.data);
+export const exportarCarros = async () => {
+  const response = await api.get('/carros/export-cars', { responseType: 'blob' });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "carros.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+  
 
 export default {
   listarCarrosPaginado,

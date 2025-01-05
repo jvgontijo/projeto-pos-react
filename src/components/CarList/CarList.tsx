@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listarCarrosPaginado, deletarCarro, buscarCarroPorId } from "../../services/car-service";
+import { listarCarrosPaginado, deletarCarro, buscarCarroPorId, exportarCarros } from "../../services/car-service";
 import {
   Fab,
   Dialog,
@@ -86,6 +86,14 @@ const CarList: React.FC = () => {
     handleCloseForm();
   };
 
+  const handleExport = async () => {
+    try {
+      await exportarCarros();
+    } catch (error) {
+      console.error("Erro ao exportar carros:", error);
+    }
+  }
+
   return (
     <div className="car-list-container">
       {error && <p className="error-message">{error}</p>}
@@ -103,6 +111,13 @@ const CarList: React.FC = () => {
           <option value={50}>50</option>
           <option value={100}>100</option>
         </select>
+        <button
+          className="export-button"
+          color="primary"
+          onClick={handleExport}
+        >
+          Exportar como CSV
+        </button>
       </div>
       <table className="table-list">
         <thead>
@@ -173,17 +188,19 @@ const CarList: React.FC = () => {
         </button>
       </div>
 
-      <Fab 
-        color="primary" 
-        aria-label="add" 
-        onClick={handleOpenForm} 
-        style={{ position: 'fixed', bottom: 16, right: 16 }}
+      <Fab
+        color="primary"
+        aria-label="add"
+        onClick={handleOpenForm}
+        style={{ position: "fixed", bottom: 16, right: 16 }}
       >
         <AddIcon />
       </Fab>
 
       <Dialog open={open} onClose={handleCloseForm} maxWidth="md" fullWidth>
-        <DialogTitle>{editingCar ? "Editar Carro" : "Cadastrar Carro"}</DialogTitle>
+        <DialogTitle>
+          {editingCar ? "Editar Carro" : "Cadastrar Carro"}
+        </DialogTitle>
         <DialogContent>
           <CarForm onCarAdded={handleCarSaved} initialData={editingCar} />
         </DialogContent>

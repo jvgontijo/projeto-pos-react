@@ -35,6 +35,7 @@ body {
 
 .button {
     width: 100%;
+    margin: 0.2rem;
     padding: 0.8rem;
     border: none;
     border-radius: var(--border-radius);
