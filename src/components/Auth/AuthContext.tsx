@@ -1,17 +1,40 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { User } from "../../models/user";
 
 interface AuthContextProps {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  getProfile: () => Promise<any>;
+  getProfile: () => Promise<User>;
+  isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem("token"));
+
+  useEffect(() => {
+    const fetchProfileOnInit = async () => {
+      setToken(localStorage.getItem("token"));
+
+      if (token) {
+        try {
+          await axios.get("http://localhost:8080/api/usuarios/my-profile", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Token inválido ou expirado:", error);
+          logout();
+        }
+      }
+    };
+
+    fetchProfileOnInit();
+  }, [token]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -21,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       setToken(response.data.token);
       localStorage.setItem("token", response.data.token);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       throw new Error("Credenciais inválidas.");
@@ -43,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, getProfile }}>
+    <AuthContext.Provider value={{ token, login, logout, getProfile, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,12 +5,10 @@ import CarList from "./components/CarList/CarList";
 import CarForm from "./components/CarForm/CarForm";
 import LoginPage from "./components/Auth/LoginPage/LoginPage";
 import DashboardLayout from "./components/DashboardLayout/DashboardLayout";
-import UserProfile from "./components/Auth/UserProfile";
+import UserProfile from "./components/UserProfile/UserProfile";
 import { AuthProvider } from "./components/Auth/AuthContext";
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -20,7 +18,7 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute>
                 <DashboardLayout />
               </ProtectedRoute>
             }
