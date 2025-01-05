@@ -1,12 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
-import Header from "./components/Header/Header";
-import CarList from "./components/CarList/CarList";
-import CarForm from "./components/CarForm/CarForm";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./components/Auth/AuthContext";
 import LoginPage from "./components/Auth/LoginPage/LoginPage";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import CarList from "./components/CarList/CarList";
 import DashboardLayout from "./components/DashboardLayout/DashboardLayout";
 import UserProfile from "./components/UserProfile/UserProfile";
-import { AuthProvider } from "./components/Auth/AuthContext";
 
 const App = () => {
   return (
